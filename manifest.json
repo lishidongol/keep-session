@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "author": "lishidongol",
+  "name": "Keep Session",
+  "version": "1.0.0",
+  "description": "保持网页 Session 不失效，支持定时请求、心跳检测、防止 Idle 超时",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "optional_host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Keep Session"
+  },
+  "options_page": "options/options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["shared/storage.js", "content/keep-alive.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

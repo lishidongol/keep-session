@@ -1,0 +1,283 @@
+/* popup/popup.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  color: #333;
+  background: #fff;
+}
+
+/* ── 状态卡片 ────────────────────────────── */
+
+.status-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  transition: background 0.3s;
+}
+
+.status-card.status-running {
+  background: #e8f5e9;
+}
+
+.status-card.status-disabled {
+  background: #f5f5f5;
+}
+
+.status-card.status-session-lost {
+  background: #ffebee;
+}
+
+.status-card.status-error {
+  background: #fff3e0;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-running .status-dot {
+  background: #4caf50;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
+}
+
+.status-disabled .status-dot {
+  background: #bdbdbd;
+}
+
+.status-session-lost .status-dot {
+  background: #f44336;
+  box-shadow: 0 0 6px rgba(244, 67, 54, 0.5);
+}
+
+.status-error .status-dot {
+  background: #ff9800;
+  box-shadow: 0 0 6px rgba(255, 152, 0, 0.5);
+}
+
+.status-domain {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+.status-text {
+  margin-left: auto;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.status-running .status-text { color: #2e7d32; }
+.status-disabled .status-text { color: #999; }
+.status-session-lost .status-text { color: #c62828; }
+.status-error .status-text { color: #e65100; }
+
+/* ── 内容区 ──────────────────────────────── */
+
+.content {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── 主开关 ──────────────────────────────── */
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.toggle-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #bdbdbd;
+  border-radius: 12px;
+  transition: background 0.3s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle input:checked + .toggle-slider {
+  background: #4caf50;
+}
+
+.toggle input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+/* ── 统计网格 ────────────────────────────── */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stat-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a73e8;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* ── 域名覆盖提示 ────────────────────────── */
+
+.domain-hint {
+  background: #e3f2fd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #1565c0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── 心跳候选 ────────────────────────────── */
+
+.heartbeat-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.heartbeat-header {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.heartbeat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.heartbeat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: white;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #555;
+  cursor: pointer;
+  transition: background 0.2s;
+  word-break: break-all;
+}
+
+.heartbeat-item:hover {
+  background: #e8f5e9;
+}
+
+.heartbeat-item.selected {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.heartbeat-item .hb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid #bbb;
+  flex-shrink: 0;
+}
+
+.heartbeat-item.selected .hb-dot {
+  border-color: #4caf50;
+  background: #4caf50;
+}
+
+/* ── 底部按钮 ────────────────────────────── */
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.btn {
+  flex: 1;
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: #e0e0e0;
+}
+
+.btn:active {
+  background: #d0d0d0;
+}

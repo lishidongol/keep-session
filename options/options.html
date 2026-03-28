@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keep Session — 设置</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h1::before {
+      content: '🔄';
+    }
+
+    h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #555;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .form-row:last-child { border-bottom: none; }
+
+    .form-label {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .form-label small {
+      display: block;
+      color: #999;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    input[type="number"], input[type="text"], select {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      width: 160px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.15);
+    }
+
+    /* Toggle */
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #bdbdbd;
+      border-radius: 12px;
+      transition: background 0.3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: #4caf50;
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    /* 域名覆盖列表 */
+    .domain-list {
+      margin-top: 8px;
+    }
+
+    .domain-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+
+    .domain-item .domain-name {
+      font-weight: 500;
+      font-size: 13px;
+      flex: 1;
+    }
+
+    .domain-item .domain-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-sm {
+      background: none;
+      border: 1px solid #ddd;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .btn-sm:hover { background: #eee; }
+    .btn-sm.danger { color: #e53935; border-color: #ffcdd2; }
+    .btn-sm.danger:hover { background: #ffebee; }
+
+    /* 添加域名 */
+    .add-domain-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .add-domain-row input {
+      flex: 1;
+    }
+
+    .btn-add {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover { background: #1557b0; }
+
+    /* 保存提示 */
+    .save-hint {
+      text-align: center;
+      font-size: 12px;
+      color: #4caf50;
+      margin-top: 8px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .save-hint.show { opacity: 1; }
+
+    /* 编辑弹窗 */
+    .edit-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .edit-overlay.active { display: flex; }
+
+    .edit-dialog {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 400px;
+      max-width: 90vw;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    .edit-dialog h3 {
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    .edit-dialog .form-row { padding: 8px 0; }
+
+    .edit-dialog .btn-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .btn-cancel {
+      background: #f0f0f0;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-save {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-save:hover { background: #1557b0; }
+
+    .empty-state {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Keep Session 设置</h1>
+
+    <!-- 全局设置 -->
+    <div class="section">
+      <h2>全局默认配置</h2>
+
+      <div class="form-row">
+        <span class="form-label">
+          默认启用
+          <small>新打开的页面是否自动启用保活</small>
+        </span>
+        <label class="toggle">
+          <input type="checkbox" id="opt-enabled">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <span class="form-label">
+          请求间隔
+          <small>每隔多少秒发送一次保活请求（最小 10s）</small>
+        </span>
+        <input type="number" id="opt-interval" min="10" max="600" value="60">
+      </div>
+
+      <div class="form-row">
+        <span class="form-label">
+          请求方式
+          <small>HEAD 轻量 / GET 完整 / 自定义 URL</small>
+        </span>
+        <select id="opt-method">
+          <option value="head">HEAD（轻量）</option>
+          <option value="get">GET（完整）</option>
+          <option value="custom">自定义 URL</option>
+        </select>
+      </div>
+
+      <div class="form-row" id="custom-url-row" style="display:none;">
+        <span class="form-label">
+          自定义请求 URL
+          <small>保活请求将发送到此地址</small>
+        </span>
+        <input type="text" id="opt-custom-url" placeholder="https://example.com/api/ping">
+      </div>
+
+      <div class="form-row">
+        <span class="form-label">
+          防止 Idle 检测
+          <small>模拟用户活动，阻止页面判定为空闲</small>
+        </span>
+        <label class="toggle">
+          <input type="checkbox" id="opt-prevent-idle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <span class="form-label">
+          Idle 事件间隔
+          <small>模拟用户操作的间隔秒数</small>
+        </span>
+        <input type="number" id="opt-idle-interval" min="5" max="120" value="30">
+      </div>
+    </div>
+
+    <!-- 域名覆盖 -->
+    <div class="section">
+      <h2>域名级别覆盖</h2>
+      <p style="font-size: 12px; color: #999; margin-bottom: 12px;">
+        为特定域名设置不同于全局的保活配置
+      </p>
+
+      <div id="domain-list" class="domain-list"></div>
+
+      <div class="add-domain-row">
+        <input type="text" id="new-domain-input" placeholder="输入域名，如 example.com">
+        <button class="btn-add" id="btn-add-domain">添加</button>
+      </div>
+    </div>
+
+    <div id="save-hint" class="save-hint">✓ 已自动保存</div>
+  </div>
+
+  <!-- 编辑域名弹窗 -->
+  <div class="edit-overlay" id="edit-overlay">
+    <div class="edit-dialog">
+      <h3 id="edit-domain-title">编辑域名配置</h3>
+
+      <div class="form-row">
+        <span class="form-label">启用</span>
+        <label class="toggle">
+          <input type="checkbox" id="edit-enabled">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <span class="form-label">请求间隔（秒）</span>
+        <input type="number" id="edit-interval" min="10" max="600">
+      </div>
+
+      <div class="form-row">
+        <span class="form-label">请求方式</span>
+        <select id="edit-method">
+          <option value="head">HEAD</option>
+          <option value="get">GET</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <span class="form-label">心跳 URL</span>
+        <input type="text" id="edit-heartbeat" placeholder="自动检测或手动填写">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-cancel" id="edit-cancel">取消</button>
+        <button class="btn-save" id="edit-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/storage.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

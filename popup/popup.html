@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keep Session</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- 状态卡片 -->
+  <div id="status-card" class="status-card status-disabled">
+    <div class="status-dot"></div>
+    <span id="status-domain" class="status-domain">-</span>
+    <span id="status-text" class="status-text">未启用</span>
+  </div>
+
+  <div class="content">
+    <!-- 主开关 -->
+    <div class="toggle-row">
+      <span class="toggle-label">保持 Session 活跃</span>
+      <label class="toggle">
+        <input type="checkbox" id="main-toggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div id="stat-requests" class="stat-value">0</div>
+        <div class="stat-label">已发送请求</div>
+      </div>
+      <div class="stat-card">
+        <div id="stat-elapsed" class="stat-value">0m</div>
+        <div class="stat-label">活跃时长</div>
+      </div>
+    </div>
+
+    <!-- 域名覆盖提示 -->
+    <div id="domain-override-hint" class="domain-hint" style="display:none;">
+      ⚙ <span id="domain-hint-text"></span>
+    </div>
+
+    <!-- 心跳候选 -->
+    <div id="heartbeat-section" class="heartbeat-section" style="display:none;">
+      <div class="heartbeat-header">检测到心跳接口</div>
+      <div id="heartbeat-list" class="heartbeat-list"></div>
+    </div>
+
+    <!-- 底部按钮 -->
+    <div class="action-buttons">
+      <button id="btn-domain-settings" class="btn">域名设置</button>
+      <button id="btn-global-settings" class="btn">全局设置</button>
+    </div>
+  </div>
+
+  <script src="../shared/storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
